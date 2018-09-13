@@ -5,7 +5,7 @@ var keys = require("./keys.js");
 var request = require("request");
 var Spotify = require('node-spotify-api');
 var spotify = new Spotify(keys.spotify);
-
+var moment = require("moment");
 
 //Stored argument's array
 var nodeArgv = process.argv;
@@ -13,6 +13,9 @@ var command = process.argv[2];
 //movie or song
 var x = "";
 var parameter = "";
+var now = moment().format("MM/DD/YYYY HH:mm:ss:SSS");
+
+
 //attaches multiple word arguments
 for (var i=3; i<nodeArgv.length; i++){
   if(i>3 && i<nodeArgv.length){
@@ -21,7 +24,7 @@ for (var i=3; i<nodeArgv.length; i++){
     x = x + nodeArgv[i];
   }
 }
-
+var output = "";
 // switch case
 switch(command){
   case "concert-this":
@@ -134,3 +137,45 @@ function doThing(){
     spotifySong(txt[1]);
   });
 }
+
+
+
+function bandsInTown(parameter){
+
+  if (parameter) {
+                let queryURL = "https://rest.bandsintown.com/artists/" + parameter + "/events?app_id=codingbootcamp&date=" + moment().format("YYYY-MM-DD") + "," + moment().add(1, "Y").format("YYYY-MM-DD");
+                request(queryURL, function (err, response, body) {
+                    if (err) {
+                        throw err;
+                    } else if (response.statusCode === 200) {
+                        var result = JSON.parse(body);
+                        output+= result[0].lineup.join(", ") + "\n";
+                        output += result[0].venue.name + "\n";
+                        output += result[0].venue.city + "\n";
+                        output += moment(result[0].datetime).format('MM/DD/YY');
+                        finish();
+                    };
+                });
+            } else {
+                let queryURL = "https://rest.bandsintown.com/artists/carrieunderwood/events?app_id=codingbootcamp&date=" + moment().format("YYYY-MM-DD") + "," + moment().add(1, "Y").format("YYYY-MM-DD");
+                request(queryURL, function (err, response, body) {
+                    if (err) {
+                        throw err;
+                    } else if (response.statusCode === 200) {
+                        var result = JSON.parse(body);
+                        output += result[0].lineup.join(", ") + "\n";
+                        output += result[0].venue.name + "\n";
+                        output += result[0].venue.city + "\n";
+                        output += moment(result[0].datetime).format('MM/DD/YY');
+                        finish();
+                    };
+                });
+            };
+}
+
+ function finish() {
+        fs.appendFile("log.txt", "\n\n" + now + "\n" + output, function (err) {
+            if (err) throw err;
+        });
+        console.log(output);
+    };
