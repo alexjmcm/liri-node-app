@@ -28,7 +28,7 @@ var output = "";
 // switch case
 switch(command){
   case "concert-this":
-      bandsInTown(parameter);                   
+      bandsInTown(x);                   
       break;    
 
   case "spotify-this-song":
@@ -74,11 +74,11 @@ function spotifySong(song){
         console.log("-----------------------");
         
         //adds text to log.txt
-        fs.appendFile('log.txt', songData.artists[0].name);
-        fs.appendFile('log.txt', songData.name);
-        fs.appendFile('log.txt', songData.preview_url);
-        fs.appendFile('log.txt', songData.album.name);
-        fs.appendFile('log.txt', "-----------------------");
+        fs.appendFile('log.txt', songData.artists[0].name, (error) => {if(error) console.log(error)});
+        fs.appendFile('log.txt', songData.name, (error) => {if(error) console.log(error)});
+        fs.appendFile('log.txt', songData.preview_url, (error) => {if(error) console.log(error)});
+        fs.appendFile('log.txt', songData.album.name, (error) => {if(error) console.log(error)});
+        fs.appendFile('log.txt', "-----------------------", (error) => {if(error) console.log(error)});
       }
     } else{
       console.log('Error occurred.');
@@ -103,14 +103,24 @@ function omdbData(movie){
      
 
       //adds text to log.txt
-      fs.appendFile('log.txt', "Title: " + body.Title);
-      fs.appendFile('log.txt', "Release Year: " + body.Year);
-      fs.appendFile('log.txt', "IMdB Rating: " + body.imdbRating);
-      fs.appendFile('log.txt', "Country: " + body.Country);
-      fs.appendFile('log.txt', "Language: " + body.Language);
-      fs.appendFile('log.txt', "Plot: " + body.Plot);
-      fs.appendFile('log.txt', "Actors: " + body.Actors);
-      fs.appendFile('log.txt', "Rotten Tomatoes Rating: " + body.Ratings[0].Value);
+      fs.appendFile('log.txt', "Title: " + body.Title, (error) =>  {if(error) console.log(error)});
+      fs.appendFile('log.txt', "Release Year: " + body.Year,  (error) =>  {if(error) console.log(error)});  
+ 
+
+
+
+      fs.appendFile('log.txt', "IMdB Rating: " + body.imdbRating,  (error) =>  {if(error) console.log(error)});    
+     
+      fs.appendFile('log.txt', "Country: " + body.Country,  (error) =>  {if(error) console.log(error)});      
+   
+      fs.appendFile('log.txt', "Language: " + body.Language, (error) =>  {if(error) console.log(error)});     
+     
+      fs.appendFile('log.txt', "Plot: " + body.Plot,  (error) =>  {if(error) console.log(error)});  
+    
+      fs.appendFile('log.txt', "Actors: " + body.Actors,  (error) =>  {if(error) console.log(error)});     
+     
+      fs.appendFile('log.txt', "Rotten Tomatoes Rating: " + body.Ratings[0].Value, (error) =>  {if(error) console.log(error)});         
+  
      
 
     } else{
@@ -122,9 +132,9 @@ function omdbData(movie){
       console.log("It's on Netflix!");
 
       //adds text to log.txt
-      fs.appendFile('log.txt', "-----------------------");
-      fs.appendFile('log.txt', "If you haven't watched 'Mr. Nobody,' then you should: http://www.imdb.com/title/tt0485947/");
-      fs.appendFile('log.txt', "It's on Netflix!");
+      fs.appendFile('log.txt', "-----------------------", (error) =>  {if(error) console.log(error)});
+      fs.appendFile('log.txt', "If you haven't watched 'Mr. Nobody,' then you should: http://www.imdb.com/title/tt0485947/", (error) =>  {if(error) console.log(error)});         
+      fs.appendFile('log.txt', "It's on Netflix!", (error) =>  {if(error) console.log(error)});         
     }
   });
 
@@ -141,7 +151,8 @@ function doThing(){
 
 
 function bandsInTown(parameter){
-
+  console.log(parameter);
+  
   if (parameter) {
                 let queryURL = "https://rest.bandsintown.com/artists/" + parameter + "/events?app_id=codingbootcamp&date=" + moment().format("YYYY-MM-DD") + "," + moment().add(1, "Y").format("YYYY-MM-DD");
                 request(queryURL, function (err, response, body) {
@@ -149,6 +160,7 @@ function bandsInTown(parameter){
                         throw err;
                     } else if (response.statusCode === 200) {
                         var result = JSON.parse(body);
+                        console.log(result);
                         output+= result[0].lineup.join(", ") + "\n";
                         output += result[0].venue.name + "\n";
                         output += result[0].venue.city + "\n";
@@ -157,12 +169,13 @@ function bandsInTown(parameter){
                     };
                 });
             } else {
-                let queryURL = "https://rest.bandsintown.com/artists/carrieunderwood/events?app_id=codingbootcamp&date=" + moment().format("YYYY-MM-DD") + "," + moment().add(1, "Y").format("YYYY-MM-DD");
+                let queryURL = "https://rest.bandsintown.com/artists/ladygaga/events?app_id=codingbootcamp&date=" + moment().format("YYYY-MM-DD") + "," + moment().add(1, "Y").format("YYYY-MM-DD");
                 request(queryURL, function (err, response, body) {
                     if (err) {
                         throw err;
                     } else if (response.statusCode === 200) {
                         var result = JSON.parse(body);
+                        console.log(result);
                         output += result[0].lineup.join(", ") + "\n";
                         output += result[0].venue.name + "\n";
                         output += result[0].venue.city + "\n";
